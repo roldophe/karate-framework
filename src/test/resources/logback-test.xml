@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Karate logging (Note: Java package remains com.intuit.karate even though Maven groupId is io.karatelabs) -->
+    <logger name="com.intuit.karate" level="INFO"/>
+
+    <!-- Spring Boot logging -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.boot" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <!-- Reduce noise from Spring Boot test startup -->
+    <logger name="org.springframework.test" level="WARN"/>
+    <logger name="org.springframework.boot.test" level="WARN"/>
+
+    <!-- Application logging -->
+    <logger name="com.example.karateframework" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
