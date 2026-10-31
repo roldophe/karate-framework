@@ -19,6 +19,8 @@
         <exclude name="JUnitTestContainsTooManyAsserts"/>
         <!-- System.out is acceptable in test logging -->
         <exclude name="SystemPrintln"/>
+        <!-- Allow abstract test base classes without abstract methods -->
+        <exclude name="AbstractClassWithoutAbstractMethod"/>
     </rule>
 
     <!-- Code Style -->
@@ -102,6 +104,12 @@
         <exclude name="AssignmentInOperand"/>
         <!-- Allow test data setup complexity -->
         <exclude name="AvoidLiteralsInIfCondition"/>
+        <!-- Allow Karate test classes (PMD doesn't recognize @Karate.Test) -->
+        <exclude name="TestClassWithoutTestCases"/>
+        <!-- Allow duplicate string literals in test configuration -->
+        <exclude name="AvoidDuplicateLiterals"/>
+        <!-- Allow toUpperCase/toLowerCase without locale in tests -->
+        <exclude name="UseLocaleWithCaseConversions"/>
     </rule>
 
     <!-- Multithreading -->

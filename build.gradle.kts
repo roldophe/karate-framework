@@ -58,6 +58,11 @@ tasks.named<Test>("test") {
     filter {
         excludeTestsMatching("*KarateTest")
     }
+
+    // Don't fail if no tests found (since all tests might be Karate tests)
+    filter {
+        isFailOnNoMatchingTests = false
+    }
 }
 
 // Dedicated task for Karate tests
