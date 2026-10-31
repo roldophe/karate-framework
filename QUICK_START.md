@@ -318,6 +318,7 @@ Open: `build/karate-reports/karate-summary.html`
 
 Edit `src/test/resources/logback-test.xml`:
 ```xml
+<!-- Note: Java package remains com.intuit.karate even in Karate 2.x -->
 <logger name="com.intuit.karate" level="DEBUG"/>
 ```
 

@@ -69,7 +69,7 @@ spotless {
     format("misc") {
         target("**/*.md", "**/*.yaml", "**/*.yml", "**/*.json")
         trimTrailingWhitespace()
-        indentWithSpaces(2)
+        leadingTabsToSpaces(2)
         endWithNewline()
     }
 }
@@ -281,7 +281,7 @@ Location: `config/spotbugs/exclude.xml`
 
 ```kotlin
 spotbugs {
-    toolVersion = "4.8.6"
+    toolVersion = "4.9.8"
     effort = Effort.MAX
     reportLevel = Confidence.MEDIUM
 }
@@ -793,10 +793,10 @@ PMD version mismatch.
 
 ```bash
 # Current version in build.gradle.kts
-toolVersion = "7.0.0"
+toolVersion = "7.21.0"
 
 # Update to latest
-toolVersion = "7.6.0"  # or latest stable
+toolVersion = "7.21.0"  # or latest stable
 ```
 
 ### EditorConfig Issues

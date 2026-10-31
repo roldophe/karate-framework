@@ -27,21 +27,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // Test dependencies
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        // Spring Boot 4.x uses JUnit 6, but Karate 1.5.x requires JUnit 5
-        // Exclude JUnit 6 to prevent conflicts
-        exclude(group = "org.junit.jupiter", module = "junit-jupiter")
-        exclude(group = "org.junit", module = "junit-bom")
-    }
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    // Karate Testing Framework v1.x (uses JUnit 5)
-    // Version: 1.5.1 (stable, compatible with Java 17-23, works with Spring Boot 4.x)
-    // Note: Karate 2.x available but requires significant code migration
-    testImplementation("io.karatelabs:karate-junit5:1.5.1")
-
-    // Explicitly add JUnit 5 dependencies to override Spring Boot 4's JUnit 6
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    // Karate Testing Framework v2.x (uses JUnit 6 - aligns with Spring Boot 4.x)
+    // Version: 2.1.4 (Oct 2026) - Latest stable, requires Java 21+
+    // Note: Karate 2.x uses @Karate annotation with JUnit 6 @TestFactory for dynamic tests
+    testImplementation("io.karatelabs:karate-junit6:2.1.4")
 }
 
 tasks.withType<Test> {

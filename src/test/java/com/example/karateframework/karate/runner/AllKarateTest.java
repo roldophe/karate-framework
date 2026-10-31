@@ -1,26 +1,30 @@
 package com.example.karateframework.karate.runner;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.example.karateframework.karate.KarateTestBase;
-import com.example.karateframework.karate.TestMarkers;
-import com.intuit.karate.Results;
+
+import io.karatelabs.junit6.Karate;
 
 /**
- * Test runner that executes ALL Karate feature files in parallel. Excludes scenarios tagged
- * with @ignore.
+ * Test runner that executes ALL Karate feature files using Karate 2.x.
+ *
+ * <p>Uses @Karate.Test annotation for dynamic test generation with JUnit 6.
+ *
+ * <p>Excludes scenarios tagged with @ignore.
  *
  * <p>Usage: - ./gradlew karateTest - ./gradlew karateTest -Dkarate.env=dev - ./gradlew karateTest
  * -Dkarate.options="--tags @regression"
  */
 class AllKarateTest extends KarateTestBase {
 
-    @Test
-    void runAllKarateTests() {
-        Results results =
-                runKarate(
-                        "classpath:karate/features", TestMarkers.IGNORE, 5, "build/karate-reports");
+    @BeforeEach
+    void setPort() {
+        setPortForKarate();
+    }
 
-        assertKaratePassed(results);
+    @Karate.Test
+    Karate runAllKarateTests() {
+        return Karate.run("classpath:karate/features").tags("~@ignore").relativeTo(getClass());
     }
 }
