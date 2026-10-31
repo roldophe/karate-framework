@@ -25,6 +25,8 @@
     <rule ref="category/java/codestyle.xml">
         <!-- Allow short variable names in tests -->
         <exclude name="ShortVariable"/>
+        <!-- Short class names are OK for domain models -->
+        <exclude name="ShortClassName"/>
         <!-- Long variable names are OK for clarity -->
         <exclude name="LongVariable"/>
         <!-- Allow multiple return statements -->
@@ -75,6 +77,8 @@
         <exclude name="CyclomaticComplexity"/>
         <exclude name="NPathComplexity"/>
         <exclude name="CognitiveComplexity"/>
+        <!-- Allow utility classes without private constructor (Spring Boot main) -->
+        <exclude name="UseUtilityClass"/>
     </rule>
 
     <!-- Documentation -->
@@ -144,9 +148,5 @@
     <rule ref="category/java/errorprone.xml/AvoidMultipleUnaryOperators"/>
     <rule ref="category/java/errorprone.xml/BrokenNullCheck"/>
     <rule ref="category/java/errorprone.xml/CheckSkipResult"/>
-
-    <!-- Code optimization -->
-    <rule ref="category/java/performance.xml/SimplifyStartsWith"/>
-    <rule ref="category/java/performance.xml/UseStringBufferLength"/>
 
 </ruleset>

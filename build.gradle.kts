@@ -1,11 +1,11 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.0.5"
+    id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "8.10.4"
     id("pmd")
-    id("com.github.spotbugs") version "6.0.26"
-    id("org.owasp.dependencycheck") version "11.1.1"
+    id("com.github.spotbugs") version "6.5.13"
+    id("org.owasp.dependencycheck") version "12.2.2"
 }
 
 group = "com.example"
@@ -28,14 +28,15 @@ dependencies {
 
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        // Spring Boot 4.0 uses JUnit 6, but Karate 1.5.x requires JUnit 5
+        // Spring Boot 4.x uses JUnit 6, but Karate 1.5.x requires JUnit 5
         // Exclude JUnit 6 to prevent conflicts
         exclude(group = "org.junit.jupiter", module = "junit-jupiter")
         exclude(group = "org.junit", module = "junit-bom")
     }
 
-    // Karate Testing Framework (uses JUnit 5)
-    // Latest stable version: 1.5.1 (groupId changed from com.intuit.karate to io.karatelabs in 1.5.0)
+    // Karate Testing Framework v1.x (uses JUnit 5)
+    // Version: 1.5.1 (stable, compatible with Java 17-23, works with Spring Boot 4.x)
+    // Note: Karate 2.x available but requires significant code migration
     testImplementation("io.karatelabs:karate-junit5:1.5.1")
 
     // Explicitly add JUnit 5 dependencies to override Spring Boot 4's JUnit 6
@@ -148,7 +149,7 @@ spotless {
         target("**/*.md", "**/.gitignore", "**/*.yaml", "**/*.yml", "**/*.json")
         targetExclude("build/**", ".gradle/**")
         trimTrailingWhitespace()
-        indentWithSpaces(2)
+        leadingTabsToSpaces(2)
         endWithNewline()
     }
 }
@@ -156,7 +157,7 @@ spotless {
 // PMD - Static Code Analysis
 pmd {
     isConsoleOutput = true
-    toolVersion = "7.0.0"
+    toolVersion = "7.21.0"
     rulesMinimumPriority = 5
     ruleSetFiles = files("config/pmd/ruleset.xml")
 
@@ -193,7 +194,7 @@ tasks.register("formatAndCheck") {
 
 // SpotBugs - Find bugs and security vulnerabilities
 spotbugs {
-    toolVersion = "4.8.6"
+    toolVersion = "4.9.8"
     effort = com.github.spotbugs.snom.Effort.MAX
     reportLevel = com.github.spotbugs.snom.Confidence.MEDIUM
 
