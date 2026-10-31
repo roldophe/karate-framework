@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!--
+        OWASP Dependency-Check Suppressions File
+
+        Use this file to suppress false positives.
+        Add suppressions for:
+        1. Development/test dependencies that are not deployed to production
+        2. Known issues that have been assessed and accepted
+        3. False positives from the NVD database
+
+        Format:
+        <suppress>
+           <notes>Explanation of why this is suppressed</notes>
+           <filePath regex="true">.*dependency-name.*</filePath>
+           <cve>CVE-YYYY-NNNNN</cve>
+        </suppress>
+    -->
+
+    <!-- Example: Suppress test dependencies -->
+    <!--
+    <suppress>
+        <notes>
+            JUnit is only used in test scope and not deployed to production.
+            This CVE affects runtime behavior that doesn't apply to test execution.
+        </notes>
+        <filePath regex="true">.*junit.*\.jar</filePath>
+        <cve>CVE-2020-15250</cve>
+    </suppress>
+    -->
+
+    <!-- Example: Suppress Karate test framework vulnerabilities in test scope -->
+    <!--
+    <suppress>
+        <notes>
+            Karate framework is only used for testing and is not part of the production deployment.
+            Security vulnerabilities in test dependencies do not affect production security.
+        </notes>
+        <filePath regex="true">.*karate.*\.jar</filePath>
+        <vulnerabilityName>CVE-2023-XXXXX</vulnerabilityName>
+    </suppress>
+    -->
+
+    <!-- Example: Suppress false positives for specific dependency -->
+    <!--
+    <suppress>
+        <notes>
+            False positive: This CVE is for a different product with similar name.
+            Our version is not affected as confirmed by vendor security advisory.
+        </notes>
+        <gav regex="true">com\.example:my-library:.*</gav>
+        <cpe>cpe:/a:vendor:product</cpe>
+    </suppress>
+    -->
+
+    <!-- Add your suppressions below -->
+
+</suppressions>

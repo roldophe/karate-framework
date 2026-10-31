@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+    xmlns="https://github.com/spotbugs/filter/3.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- Exclude test code patterns that are acceptable in tests but not in production -->
+
+    <!-- Allow test data classes without equals/hashCode -->
+    <Match>
+        <Class name="~.*\.model\..*"/>
+        <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+    </Match>
+
+    <!-- Allow test methods to return null for test data -->
+    <Match>
+        <Class name="~.*Test$"/>
+        <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+    </Match>
+
+    <!-- Allow System.out/err in test utilities -->
+    <Match>
+        <Class name="~.*Test.*"/>
+        <Or>
+            <Bug pattern="INFORMATION_EXPOSURE_THROUGH_AN_ERROR_MESSAGE"/>
+            <Bug pattern="WEAK_MESSAGE_DIGEST_MD5"/>
+        </Or>
+    </Match>
+
+    <!-- Exclude generated code -->
+    <Match>
+        <Class name="~.*\$.*"/>
+    </Match>
+
+    <!-- Allow serialVersionUID warnings in DTOs -->
+    <Match>
+        <Class name="~.*\.model\..*"/>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <!-- Allow Spring controllers to have multiple injection points -->
+    <Match>
+        <Class name="~.*Controller$"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Test-specific exclusions -->
+    <Match>
+        <Class name="~.*KarateTestBase"/>
+        <Or>
+            <Bug pattern="URF_UNREAD_FIELD"/>
+            <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+        </Or>
+    </Match>
+
+    <!-- Allow test runners to have no assertions (Karate handles them) -->
+    <Match>
+        <Class name="~.*KarateTest$"/>
+        <Bug pattern="UTA_USE_ASSERTION"/>
+    </Match>
+
+</FindBugsFilter>

@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# Pre-commit hook for code quality and security checks
+# This hook runs before each commit to ensure code quality standards
+
+set -e  # Exit on error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_info() {
+    echo -e "${BLUE}ℹ ${NC}$1"
+}
+
+print_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+print_header() {
+    echo ""
+    echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}  $1${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
+    echo ""
+}
+
+# Check if gradlew exists
+if [ ! -f "./gradlew" ]; then
+    print_error "gradlew not found. Are you in the project root?"
+    exit 1
+fi
+
+# Make gradlew executable
+chmod +x ./gradlew
+
+print_header "PRE-COMMIT QUALITY & SECURITY CHECKS"
+
+# Flag to track if any check failed
+CHECKS_FAILED=0
+
+# ============================================
+# 1. Code Formatting (Spotless)
+# ============================================
+print_info "Running Spotless code formatter..."
+if ./gradlew spotlessApply --quiet; then
+    print_success "Code formatted successfully"
+
+    # Stage formatted files
+    git add -A
+else
+    print_error "Spotless formatting failed"
+    CHECKS_FAILED=1
+fi
+
+# ============================================
+# 2. Static Code Analysis (PMD)
+# ============================================
+print_info "Running PMD static code analysis..."
+if ./gradlew pmdMain --console=plain --quiet; then
+    print_success "PMD analysis passed"
+else
+    print_warning "PMD found issues. Check: build/reports/pmd/main.html"
+    # Don't fail on PMD warnings, just warn
+fi
+
+# ============================================
+# 3. Security Analysis (SpotBugs)
+# ============================================
+print_info "Running SpotBugs security analysis..."
+if ./gradlew spotbugsMain --console=plain --quiet; then
+    print_success "SpotBugs analysis passed"
+else
+    print_error "SpotBugs found security issues. Check: build/reports/spotbugs/main.html"
+    CHECKS_FAILED=1
+fi
+
+# ============================================
+# 4. Check for common issues
+# ============================================
+print_info "Checking for common issues..."
+
+# Check for debug statements
+if git diff --cached --name-only | grep '\.java$' | xargs grep -n 'System\.out\.println' 2>/dev/null; then
+    print_warning "Found System.out.println statements. Consider using a logger."
+fi
+
+# Check for TODOs in committed code
+if git diff --cached --name-only | grep '\.java$' | xargs grep -n 'TODO' 2>/dev/null; then
+    print_warning "Found TODO comments. Consider creating issues for them."
+fi
+
+# Check for hardcoded secrets patterns (only in Java files, exclude documentation)
+SECRETS_PATTERNS=(
+    'password\s*=\s*["\047]'
+    'api[_-]?key\s*=\s*["\047]'
+    'secret\s*=\s*["\047]'
+    'token\s*=\s*["\047]'
+)
+
+for pattern in "${SECRETS_PATTERNS[@]}"; do
+    # Only check Java files, exclude .md, .txt, and config files
+    JAVA_FILES=$(git diff --cached --name-only | grep -E '\.(java|properties|xml|yml|yaml)$' 2>/dev/null || true)
+    if [ -n "$JAVA_FILES" ]; then
+        if echo "$JAVA_FILES" | xargs grep -iE "$pattern" 2>/dev/null; then
+            print_error "Potential hardcoded secret detected! Pattern: $pattern"
+            CHECKS_FAILED=1
+        fi
+    fi
+done
+
+# ============================================
+# Summary
+# ============================================
+echo ""
+print_header "PRE-COMMIT CHECK SUMMARY"
+
+if [ $CHECKS_FAILED -eq 0 ]; then
+    print_success "All pre-commit checks passed!"
+    echo ""
+    print_info "You can now commit your changes."
+    echo ""
+
+    # Show reports location
+    echo "Quality Reports:"
+    echo "  • PMD:      build/reports/pmd/main.html"
+    echo "  • SpotBugs: build/reports/spotbugs/main.html"
+    echo ""
+
+    exit 0
+else
+    print_error "Pre-commit checks failed!"
+    echo ""
+    print_info "Please fix the issues above and try again."
+    echo ""
+    echo "To skip these checks (not recommended):"
+    echo "  git commit --no-verify"
+    echo ""
+    echo "To run comprehensive security scan:"
+    echo "  ./gradlew fullSecurityCheck"
+    echo ""
+
+    exit 1
+fi

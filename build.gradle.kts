@@ -4,6 +4,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "6.25.0"
     id("pmd")
+    id("com.github.spotbugs") version "6.0.26"
+    id("org.owasp.dependencycheck") version "11.1.1"
 }
 
 group = "com.example"
@@ -183,4 +185,87 @@ tasks.register("formatAndCheck") {
     group = "verification"
 
     dependsOn("spotlessApply", "pmdMain", "pmdTest")
+}
+
+// =====================================
+// Security Analysis
+// =====================================
+
+// SpotBugs - Find bugs and security vulnerabilities
+spotbugs {
+    toolVersion = "4.8.6"
+    effort = com.github.spotbugs.snom.Effort.MAX
+    reportLevel = com.github.spotbugs.snom.Confidence.MEDIUM
+
+    // Exclude test code from security analysis (optional)
+    // sourceSets = listOf(project.sourceSets.main.get())
+}
+
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+    reports {
+        create("html") {
+            required = true
+            outputLocation = file("${layout.buildDirectory.get()}/reports/spotbugs/${this.name}.html")
+        }
+        create("xml") {
+            required = true
+            outputLocation = file("${layout.buildDirectory.get()}/reports/spotbugs/${this.name}.xml")
+        }
+    }
+
+    // Exclude test files from SpotBugs analysis (they have different patterns)
+    excludeFilter = file("config/spotbugs/exclude.xml")
+}
+
+// OWASP Dependency-Check - CVE vulnerability scanning
+dependencyCheck {
+    // Scan all configurations
+    scanConfigurations = listOf("runtimeClasspath", "testRuntimeClasspath")
+
+    // Report format
+    formats = listOf("HTML", "JSON", "XML")
+
+    // Fail build on CVSS score >= 7 (High severity)
+    failBuildOnCVSS = 7.0f
+
+    // Suppress false positives
+    suppressionFile = "config/dependency-check/suppressions.xml"
+
+    // NVD API configuration (optional - faster updates)
+    nvd {
+        // Get API key from: https://nvd.nist.gov/developers/request-an-api-key
+        apiKey = System.getenv("NVD_API_KEY") ?: ""
+        delay = 2000 // milliseconds between requests
+    }
+
+    // Analyzers configuration
+    analyzers {
+        assemblyEnabled = false
+        nuspecEnabled = false
+        nodeEnabled = false
+    }
+}
+
+// Custom task for all security checks
+tasks.register("securityCheck") {
+    description = "Runs all security checks (SpotBugs + OWASP Dependency-Check)"
+    group = "verification"
+
+    dependsOn("spotbugsMain", "spotbugsTest", "dependencyCheckAnalyze")
+}
+
+// Custom task for pre-commit checks (fast)
+tasks.register("preCommitCheck") {
+    description = "Fast pre-commit checks (Spotless + PMD + SpotBugs)"
+    group = "verification"
+
+    dependsOn("spotlessApply", "pmdMain", "spotbugsMain")
+}
+
+// Custom task for comprehensive checks (includes slow CVE scan)
+tasks.register("fullSecurityCheck") {
+    description = "Comprehensive security and quality checks (includes CVE scanning)"
+    group = "verification"
+
+    dependsOn("spotlessCheck", "pmdMain", "pmdTest", "spotbugsMain", "spotbugsTest", "dependencyCheckAnalyze")
 }

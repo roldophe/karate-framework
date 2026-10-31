@@ -1,6 +1,8 @@
-# Code Quality Tools - Spotless & PMD
+# Code Quality & Security Tools
 
-This project uses **Spotless** for code formatting and **PMD** for static code analysis to maintain consistent, high-quality code.
+This project uses **Spotless** for code formatting, **PMD** for static code analysis, **SpotBugs** for security bug detection, and **OWASP Dependency-Check** for CVE vulnerability scanning.
+
+> 🔒 **See [SECURITY.md](SECURITY.md) for comprehensive security scanning and pre-commit hook documentation.**
 
 ---
 
@@ -8,11 +10,14 @@ This project uses **Spotless** for code formatting and **PMD** for static code a
 1. [Overview](#overview)
 2. [Spotless - Code Formatting](#spotless---code-formatting)
 3. [PMD - Static Code Analysis](#pmd---static-code-analysis)
-4. [EditorConfig](#editorconfig)
-5. [Usage Commands](#usage-commands)
-6. [IDE Integration](#ide-integration)
-7. [CI/CD Integration](#cicd-integration)
-8. [Troubleshooting](#troubleshooting)
+4. [SpotBugs - Security Analysis](#spotbugs---security-analysis)
+5. [OWASP Dependency-Check - CVE Scanning](#owasp-dependency-check---cve-scanning)
+6. [EditorConfig](#editorconfig)
+7. [Usage Commands](#usage-commands)
+8. [Pre-Commit Hook](#pre-commit-hook)
+9. [IDE Integration](#ide-integration)
+10. [CI/CD Integration](#cicd-integration)
+11. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -256,6 +261,102 @@ public void createUser(String username, String email) {
 
 ---
 
+## SpotBugs - Security Analysis
+
+### What SpotBugs Does
+
+SpotBugs (successor to FindBugs) analyzes Java bytecode to find bugs and security vulnerabilities:
+
+- **Null pointer dereferences**
+- **Resource leaks** (unclosed streams, connections)
+- **SQL injection vulnerabilities**
+- **XSS vulnerabilities**
+- **Insecure cryptography**
+- **Path traversal issues**
+- **Thread safety problems**
+
+### Configuration
+
+Location: `config/spotbugs/exclude.xml`
+
+```kotlin
+spotbugs {
+    toolVersion = "4.8.6"
+    effort = Effort.MAX
+    reportLevel = Confidence.MEDIUM
+}
+```
+
+### Commands
+
+```bash
+# Run SpotBugs on main code
+./gradlew spotbugsMain
+
+# Run SpotBugs on test code
+./gradlew spotbugsTest
+
+# Both
+./gradlew spotbugsMain spotbugsTest
+```
+
+### Reports
+
+- **HTML**: `build/reports/spotbugs/main.html`
+- **XML**: `build/reports/spotbugs/main.xml`
+
+---
+
+## OWASP Dependency-Check - CVE Scanning
+
+### What OWASP Dependency-Check Does
+
+Scans all project dependencies against the **National Vulnerability Database (NVD)** to find known CVEs:
+
+- Identifies vulnerable dependencies
+- Reports CVSS severity scores
+- Checks transitive dependencies
+- Provides remediation advice
+
+### Configuration
+
+Location: `config/dependency-check/suppressions.xml`
+
+```kotlin
+dependencyCheck {
+    formats = listOf("HTML", "JSON", "XML")
+    failBuildOnCVSS = 7.0f  // Fail on High+ severity
+}
+```
+
+### Commands
+
+```bash
+# Run CVE scan (first run ~60s, cached ~10s)
+./gradlew dependencyCheckAnalyze
+
+# Update CVE database
+./gradlew dependencyCheckUpdate
+```
+
+### Reports
+
+- **HTML**: `build/reports/dependency-check-report.html`
+- **JSON**: `build/reports/dependency-check-report.json`
+
+### NVD API Key (Recommended)
+
+Get faster CVE database updates:
+
+1. Register at: https://nvd.nist.gov/developers/request-an-api-key
+2. Set environment variable:
+
+```bash
+export NVD_API_KEY="your-api-key-here"
+```
+
+---
+
 ## EditorConfig
 
 ### What EditorConfig Does
@@ -301,11 +402,29 @@ EditorConfig works automatically in:
 
 ## Usage Commands
 
+### Quick Reference
+
+| Task | Command | Speed |
+|------|---------|-------|
+| Format code | `./gradlew spotlessApply` | ⚡ 1-2s |
+| Check formatting | `./gradlew spotlessCheck` | ⚡ 1-2s |
+| Static analysis | `./gradlew pmdMain` | ⚡ 2-5s |
+| Security bugs | `./gradlew spotbugsMain` | 🔸 5-10s |
+| CVE scan | `./gradlew dependencyCheckAnalyze` | 🔻 30-60s |
+| Pre-commit | `./gradlew preCommitCheck` | ⚡ < 10s |
+| Full security | `./gradlew fullSecurityCheck` | 🔻 60-90s |
+
 ### Daily Development
 
 ```bash
 # Before committing code - format everything
 ./gradlew spotlessApply
+
+# Run pre-commit checks (fast)
+./gradlew preCommitCheck
+
+# Or install pre-commit hook (auto-runs on commit)
+./install-hooks.sh
 
 # Check formatting without changing files
 ./gradlew spotlessCheck
@@ -313,8 +432,22 @@ EditorConfig works automatically in:
 # Run static analysis
 ./gradlew pmdMain pmdTest
 
+# Run security analysis
+./gradlew spotbugsMain spotbugsTest
+
 # Run all code quality checks
 ./gradlew codeQuality
+```
+
+### Weekly Security Scan
+
+```bash
+# Run comprehensive security check (includes CVE scan)
+./gradlew fullSecurityCheck
+
+# View reports
+open build/reports/dependency-check-report.html
+open build/reports/spotbugs/main.html
 ```
 
 ### CI/CD Pipeline
@@ -342,28 +475,74 @@ We've created convenience tasks:
 ./gradlew formatAndCheck
 ```
 
-### Pre-Commit Hook (Optional)
+---
 
-Create `.git/hooks/pre-commit`:
+## Pre-Commit Hook
+
+### Automated Quality & Security Checks
+
+Install a pre-commit hook to **automatically** run quality and security checks before every commit:
 
 ```bash
-#!/bin/sh
-echo "Running Spotless..."
-./gradlew spotlessApply --quiet
-
-if [ $? -ne 0 ]; then
-  echo "Spotless failed. Please fix formatting issues."
-  exit 1
-fi
-
-echo "Code formatted successfully!"
-exit 0
+# One-time installation
+./install-hooks.sh
 ```
 
-Make it executable:
+### What the Hook Does
+
+On every `git commit`, it automatically:
+
+1. ✅ **Formats code** with Spotless
+2. ✅ **Runs PMD** static analysis
+3. ✅ **Runs SpotBugs** security analysis
+4. ✅ **Detects hardcoded secrets** (passwords, API keys)
+5. ✅ **Checks for common issues** (System.out, TODOs)
+6. ✅ **Stages formatted files** automatically
+7. ❌ **Blocks commit** if critical issues found
+
+### Example Output
+
 ```bash
-chmod +x .git/hooks/pre-commit
+$ git commit -m "Add new feature"
+
+════════════════════════════════════════════════════
+  PRE-COMMIT QUALITY & SECURITY CHECKS
+════════════════════════════════════════════════════
+
+ℹ Running Spotless code formatter...
+✓ Code formatted successfully
+
+ℹ Running PMD static code analysis...
+✓ PMD analysis passed
+
+ℹ Running SpotBugs security analysis...
+✓ SpotBugs analysis passed
+
+════════════════════════════════════════════════════
+  PRE-COMMIT CHECK SUMMARY
+════════════════════════════════════════════════════
+
+✓ All pre-commit checks passed!
+
+[main 1234567] Add new feature
+ 2 files changed, 45 insertions(+)
 ```
+
+### Skip Hook (Emergency Only)
+
+```bash
+# Not recommended - bypasses all checks
+git commit --no-verify -m "Emergency fix"
+```
+
+### Customize Hook
+
+Edit `.git/hooks/pre-commit` to:
+- Enable/disable CVE scanning
+- Adjust secret detection patterns
+- Change failure behavior
+
+> 📖 **Full documentation**: See [SECURITY.md](SECURITY.md)
 
 ---
 
