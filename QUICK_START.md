@@ -61,6 +61,16 @@ Run it:
 | `./gradlew karateTest -Dkarate.env=dev` | Run against dev environment |
 | `./gradlew karateTest -Dkarate.options="--tags @smoke"` | Run tests with @smoke tag |
 
+### Code Quality
+
+| Command | Description |
+|---------|-------------|
+| `./gradlew spotlessApply` | Format all code (Google Java Style) |
+| `./gradlew spotlessCheck` | Check if code is formatted |
+| `./gradlew pmdMain pmdTest` | Run static code analysis |
+| `./gradlew codeQuality` | Run all quality checks |
+| `./gradlew formatAndCheck` | Format code and run checks |
+
 ### Environment Configuration
 
 ```bash

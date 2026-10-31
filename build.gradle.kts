@@ -2,6 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "4.0.5"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.diffplug.spotless") version "6.25.0"
+    id("pmd")
 }
 
 group = "com.example"
@@ -106,4 +108,79 @@ sourceSets {
             exclude("**/*.java")
         }
     }
+}
+
+// =====================================
+// Code Quality & Formatting
+// =====================================
+
+// Spotless - Code Formatting
+spotless {
+    java {
+        // Use Google Java Format
+        googleJavaFormat("1.19.2").aosp().reflowLongStrings()
+
+        // Import order
+        importOrder("java", "javax", "org", "com", "")
+        removeUnusedImports()
+
+        // Format feature files as well
+        target("src/**/*.java")
+        targetExclude("build/**")
+
+        // Trailing whitespace
+        trimTrailingWhitespace()
+        endWithNewline()
+
+        // License header (optional)
+        // licenseHeaderFile("config/spotless/license-header.txt")
+    }
+
+    // Kotlin Gradle formatting disabled due to ktlint compatibility issues with Gradle 9.x
+    // kotlinGradle {
+    //     target("*.gradle.kts")
+    //     ktlint()
+    // }
+
+    format("misc") {
+        target("**/*.md", "**/.gitignore", "**/*.yaml", "**/*.yml", "**/*.json")
+        targetExclude("build/**", ".gradle/**")
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+}
+
+// PMD - Static Code Analysis
+pmd {
+    isConsoleOutput = true
+    toolVersion = "7.0.0"
+    rulesMinimumPriority = 5
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+
+    // Analyze both main and test code
+    sourceSets = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
+}
+
+tasks.withType<Pmd> {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// Custom task to run all code quality checks
+tasks.register("codeQuality") {
+    description = "Runs all code quality checks (Spotless, PMD)"
+    group = "verification"
+
+    dependsOn("spotlessCheck", "pmdMain", "pmdTest")
+}
+
+// Custom task to format code and run checks
+tasks.register("formatAndCheck") {
+    description = "Formats code with Spotless and runs quality checks"
+    group = "verification"
+
+    dependsOn("spotlessApply", "pmdMain", "pmdTest")
 }

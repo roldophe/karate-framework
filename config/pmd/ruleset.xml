@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<ruleset name="Karate Framework PMD Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        PMD ruleset for Karate test automation framework.
+        Enforces Java best practices, code quality, and maintainability.
+    </description>
+
+    <!-- Best Practices -->
+    <rule ref="category/java/bestpractices.xml">
+        <!-- Allow JUnit 5 assertions without messages -->
+        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+        <!-- Allow test methods without assertions (Karate feature files handle assertions) -->
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
+        <!-- Allow JUnit test class to not have test methods (base classes) -->
+        <exclude name="JUnitTestContainsTooManyAsserts"/>
+        <!-- System.out is acceptable in test logging -->
+        <exclude name="SystemPrintln"/>
+    </rule>
+
+    <!-- Code Style -->
+    <rule ref="category/java/codestyle.xml">
+        <!-- Allow short variable names in tests -->
+        <exclude name="ShortVariable"/>
+        <!-- Long variable names are OK for clarity -->
+        <exclude name="LongVariable"/>
+        <!-- Allow multiple return statements -->
+        <exclude name="OnlyOneReturn"/>
+        <!-- Allow default package (for Karate tests) -->
+        <exclude name="CommentDefaultAccessModifier"/>
+        <!-- Allow public fields in model classes -->
+        <exclude name="FieldDeclarationsShouldBeAtStartOfClass"/>
+        <!-- Allow multiple classes in one file (inner classes) -->
+        <exclude name="OneDeclarationPerLine"/>
+        <!-- Allow call to super() in constructor -->
+        <exclude name="CallSuperInConstructor"/>
+        <!-- Allow local variables with same name as fields -->
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <!-- Allow unnecessary imports (Google Java Format handles this) -->
+        <exclude name="UnnecessaryImport"/>
+        <exclude name="DuplicateImports"/>
+        <exclude name="UnusedImports"/>
+        <!-- Allow use of dollar signs in variable names -->
+        <exclude name="AvoidDollarSigns"/>
+        <!-- AtLeastOneConstructor is too restrictive for simple POJOs -->
+        <exclude name="AtLeastOneConstructor"/>
+        <!-- Allow confusing ternary -->
+        <exclude name="ConfusingTernary"/>
+    </rule>
+
+    <!-- Design -->
+    <rule ref="category/java/design.xml">
+        <!-- Allow classes with many public methods (controllers) -->
+        <exclude name="TooManyMethods"/>
+        <!-- Allow data classes with many fields -->
+        <exclude name="TooManyFields"/>
+        <!-- Coupling is acceptable in test code -->
+        <exclude name="CouplingBetweenObjects"/>
+        <exclude name="LawOfDemeter"/>
+        <!-- Allow immutable field assignments -->
+        <exclude name="ImmutableField"/>
+        <!-- Allow God classes in test base -->
+        <exclude name="GodClass"/>
+        <!-- ExcessiveImports is handled by IDE -->
+        <exclude name="ExcessiveImports"/>
+        <!-- Allow data classes -->
+        <exclude name="DataClass"/>
+        <!-- Allow deeply nested code in tests -->
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
+        <!-- Allow cyclomatic complexity in test methods -->
+        <exclude name="CyclomaticComplexity"/>
+        <exclude name="NPathComplexity"/>
+        <exclude name="CognitiveComplexity"/>
+    </rule>
+
+    <!-- Documentation -->
+    <rule ref="category/java/documentation.xml">
+        <!-- Comment requirements are too strict for tests -->
+        <exclude name="CommentRequired"/>
+        <exclude name="CommentSize"/>
+    </rule>
+
+    <!-- Error Prone -->
+    <rule ref="category/java/errorprone.xml">
+        <!-- Allow null checks -->
+        <exclude name="NullAssignment"/>
+        <!-- Allow bean member to have same name as getter -->
+        <exclude name="BeanMembersShouldSerialize"/>
+        <!-- Allow test data classes without equals/hashCode -->
+        <exclude name="DataflowAnomalyAnalysis"/>
+        <!-- Allow empty catch blocks in tests -->
+        <exclude name="EmptyCatchBlock"/>
+        <!-- Allow assignments in operands -->
+        <exclude name="AssignmentInOperand"/>
+        <!-- Allow test data setup complexity -->
+        <exclude name="AvoidLiteralsInIfCondition"/>
+    </rule>
+
+    <!-- Multithreading -->
+    <rule ref="category/java/multithreading.xml">
+        <!-- Allow volatile variables -->
+        <exclude name="AvoidUsingVolatile"/>
+        <!-- Karate handles thread safety -->
+        <exclude name="UseConcurrentHashMap"/>
+    </rule>
+
+    <!-- Performance -->
+    <rule ref="category/java/performance.xml">
+        <!-- Allow String concatenation in tests for readability -->
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+        <exclude name="InsufficientStringBufferDeclaration"/>
+    </rule>
+
+    <!-- Security -->
+    <rule ref="category/java/security.xml"/>
+
+    <!-- Custom Rules for This Project -->
+
+    <!-- Enforce proper exception handling -->
+    <rule ref="category/java/errorprone.xml/AvoidCatchingThrowable"/>
+    <rule ref="category/java/errorprone.xml/AvoidCatchingNPE"/>
+
+    <!-- Enforce proper resource management -->
+    <rule ref="category/java/errorprone.xml/CloseResource"/>
+
+    <!-- Avoid common mistakes -->
+    <rule ref="category/java/errorprone.xml/CompareObjectsWithEquals"/>
+    <rule ref="category/java/errorprone.xml/EqualsNull"/>
+
+    <!-- Encourage proper naming -->
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions"/>
+    <rule ref="category/java/codestyle.xml/MethodNamingConventions">
+        <properties>
+            <!-- Allow test method names like "runSmokeTests" -->
+            <property name="junit5TestPattern" value="[a-z][a-zA-Z0-9]*"/>
+        </properties>
+    </rule>
+
+    <!-- Prevent bugs -->
+    <rule ref="category/java/errorprone.xml/AvoidMultipleUnaryOperators"/>
+    <rule ref="category/java/errorprone.xml/BrokenNullCheck"/>
+    <rule ref="category/java/errorprone.xml/CheckSkipResult"/>
+
+    <!-- Code optimization -->
+    <rule ref="category/java/performance.xml/SimplifyStartsWith"/>
+    <rule ref="category/java/performance.xml/UseStringBufferLength"/>
+
+</ruleset>
