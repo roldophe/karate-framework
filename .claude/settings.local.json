@@ -4,7 +4,20 @@
       "WebSearch",
       "Bash(git push)",
       "Bash(git add src/main/java/com/example/karateframework/exception/ExternalApiException.java)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: Add @Serial annotation to ExternalApiException\n\nAdded @Serial annotation to serialVersionUID field to improve serialization\nsafety and resolve Qodana code quality warning.\n\nThe @Serial annotation (introduced in Java 14) provides compile-time validation\nthat the annotated field is part of the serialization mechanism, helping prevent\nserialization-related bugs.\n\nChanges:\n- Added java.io.Serial import\n- Annotated serialVersionUID with @Serial\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: Add @Serial annotation to ExternalApiException\n\nAdded @Serial annotation to serialVersionUID field to improve serialization\nsafety and resolve Qodana code quality warning.\n\nThe @Serial annotation (introduced in Java 14) provides compile-time validation\nthat the annotated field is part of the serialization mechanism, helping prevent\nserialization-related bugs.\n\nChanges:\n- Added java.io.Serial import\n- Annotated serialVersionUID with @Serial\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(./gradlew test --info)",
+      "Bash(docker ps --filter \"name=karate\" --format \"table {{.Names}}\\t{{.Status}}\\t{{.Ports}}\")",
+      "Bash(docker-compose up -d)",
+      "Bash(cat build/karate-reports/karate-summary.json)",
+      "Bash(python3 -m json.tool)",
+      "Bash(cat build/test-results/karateTest/TEST-com.example.karateframework.karate.runner.AllKarateTest.xml)",
+      "Bash(./gradlew clean test --tests AllKarateTest)",
+      "Bash(./gradlew test --tests AllKarateTest --info)",
+      "Read(//private/tmp/**)",
+      "Bash(cat build/karate-reports/karate-summary-json.txt)",
+      "Bash(cat build/reports/tests/karateTest/*.json)",
+      "Bash(./gradlew karateTest -Dkarate.options=\"--tags @smoke\")",
+      "Bash(./gradlew karateTest)"
     ],
     "deny": [],
     "ask": []
