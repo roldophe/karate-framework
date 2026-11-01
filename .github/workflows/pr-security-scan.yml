@@ -43,12 +43,9 @@ jobs:
   codeql-scan:
     name: CodeQL Scan
     runs-on: ubuntu-latest
-    # Note: Requires GitHub Advanced Security for private repos
-    # Will fail without Advanced Security license - enable at repo settings
     permissions:
       contents: read
       security-events: write
-    continue-on-error: true
 
     steps:
       - name: Checkout repository
@@ -63,17 +60,16 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:java-kotlin"
 
   dependency-cve-check:
     name: Dependency CVE Check
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    # Note: Requires GitHub Advanced Security for private repos
-    # Will fail without Advanced Security license - enable at repo settings
     permissions:
       contents: read
       pull-requests: write
-    continue-on-error: true
 
     steps:
       - name: Checkout repository
