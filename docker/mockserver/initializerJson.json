@@ -1,0 +1,36 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/external/users/.*"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "id": "ext-123",
+        "name": "External User",
+        "email": "external@example.com",
+        "source": "external-api"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/api/external/validate"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "valid": true,
+        "message": "Validation successful"
+      }
+    }
+  }
+]

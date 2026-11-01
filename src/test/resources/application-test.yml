@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: karate-framework-test
+
+  # H2 In-Memory Database for Testing
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+server:
+  port: 0  # Random port for testing
+
+external:
+  api:
+    base-url: http://localhost:1080
+    timeout: 5000
+    max-retries: 3
+
+logging:
+  level:
+    com.example.karateframework: DEBUG
+    org.springframework.web: INFO

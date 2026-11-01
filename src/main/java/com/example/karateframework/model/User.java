@@ -1,74 +1,60 @@
 package com.example.karateframework.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
-    private String id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
+    private UUID id;
+
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
+
+    @Size(max = 50, message = "First name must not exceed 50 characters")
+    @Column(name = "first_name", length = 50)
     private String firstName;
+
+    @Size(max = 50, message = "Last name must not exceed 50 characters")
+    @Column(name = "last_name", length = 50)
     private String lastName;
-    private boolean active;
 
-    public User() {
-        this.id = UUID.randomUUID().toString();
-    }
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean active = true;
 
-    public User(String username, String email, String firstName, String lastName) {
-        this.id = UUID.randomUUID().toString();
-        this.username = username;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.active = true;
-    }
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }
