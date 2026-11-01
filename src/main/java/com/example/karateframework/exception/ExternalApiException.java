@@ -1,8 +1,10 @@
 package com.example.karateframework.exception;
 
+import java.io.Serial;
+
 public class ExternalApiException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     public ExternalApiException(String message) {
         super(message);
