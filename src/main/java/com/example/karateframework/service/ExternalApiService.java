@@ -89,6 +89,8 @@ public class ExternalApiService {
         if (input == null) {
             return null;
         }
-        return input.replaceAll("[\\r\\n\\t\\f\\u0000-\\u001F\\u007F]", "_");
+        String normalized = input.replace("\r\n", "\n").replace('\r', '\n');
+        normalized = normalized.replace('\n', '_');
+        return normalized.replaceAll("[\\u0000-\\u001F\\u007F]", "_");
     }
 }
