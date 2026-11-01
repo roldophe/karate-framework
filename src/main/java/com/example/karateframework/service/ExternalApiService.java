@@ -19,7 +19,8 @@ public class ExternalApiService {
     private final RestClient restClient;
 
     public ExternalUserResponse getExternalUser(String userId) {
-        log.debug("Fetching external user with ID: {}", userId);
+        String safeUserId = sanitizeForLog(userId);
+        log.debug("Fetching external user with ID: {}", safeUserId);
 
         return restClient
                 .get()
@@ -30,7 +31,7 @@ public class ExternalApiService {
                         (request, response) -> {
                             log.error(
                                     "Client error while fetching user {}: {}",
-                                    userId,
+                                    safeUserId,
                                     response.getStatusCode());
                             throw new RuntimeException(
                                     "External API returned client error: "
@@ -41,7 +42,7 @@ public class ExternalApiService {
                         (request, response) -> {
                             log.error(
                                     "Server error while fetching user {}: {}",
-                                    userId,
+                                    safeUserId,
                                     response.getStatusCode());
                             throw new RuntimeException(
                                     "External API returned server error: "
@@ -51,7 +52,8 @@ public class ExternalApiService {
     }
 
     public ValidationResponse validateData(String data) {
-        log.debug("Validating data: {}", data);
+        String safeData = sanitizeForLog(data);
+        log.debug("Validating data: {}", safeData);
 
         ValidationRequest request = new ValidationRequest(data);
 
@@ -68,5 +70,12 @@ public class ExternalApiService {
                                     "External API validation error: " + response.getStatusCode());
                         })
                 .body(ValidationResponse.class);
+    }
+
+    private String sanitizeForLog(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("[\\r\\n\\t\\f\\u0000-\\u001F\\u007F]", "_");
     }
 }
