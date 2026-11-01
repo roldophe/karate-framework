@@ -27,7 +27,10 @@ public class ExternalApiController {
             return ResponseEntity.ok(response);
         } catch (ExternalApiException e) {
             if (log.isErrorEnabled()) {
-                log.error("Failed to fetch external user {}: {}", userId, e.getMessage());
+                log.error(
+                        "Failed to fetch external user {}: {}",
+                        sanitizeForLog(userId),
+                        e.getMessage());
             }
             return ResponseEntity.internalServerError().build();
         }
@@ -44,5 +47,12 @@ public class ExternalApiController {
             }
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    private String sanitizeForLog(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("[\\r\\n\\t\\f\\u0000-\\u001F\\u007F]", "_");
     }
 }
