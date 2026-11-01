@@ -163,7 +163,7 @@ spotless {
 // PMD - Static Code Analysis
 pmd {
     isConsoleOutput = true
-    toolVersion = "7.21.0"
+    toolVersion = "7.22.0"
     rulesMinimumPriority = 5
     ruleSetFiles = files("config/pmd/ruleset.xml")
 
