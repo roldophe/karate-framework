@@ -29,6 +29,20 @@ dependencies {
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.karatelabs:karate-junit6:${property("KARATE_JUNIT6_VERSION")}")
+
+    // Security: Override vulnerable transitive dependencies
+    // OGNL vulnerability fix (CVE via Karate → Thymeleaf → OGNL)
+    constraints {
+        testImplementation("ognl:ognl:3.4.13") {
+            because("Fixes CVE: OGNL stricter-invocation block list bypass")
+        }
+        implementation("com.google.guava:guava:33.7.2-jre") {
+            because("Fixes CVE: CompactHashMap deserialization memory allocation issue")
+        }
+        implementation("org.jsoup:jsoup:1.23.2") {
+            because("Fixes CVE: XmlTreeBuilder memory exhaustion vulnerability")
+        }
+    }
 }
 
 tasks.withType<Test> {
@@ -149,7 +163,7 @@ spotless {
 // PMD - Static Code Analysis
 pmd {
     isConsoleOutput = true
-    toolVersion = "7.21.0"
+    toolVersion = "7.22.0"
     rulesMinimumPriority = 5
     ruleSetFiles = files("config/pmd/ruleset.xml")
 
