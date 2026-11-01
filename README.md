@@ -37,14 +37,14 @@ open build/karate-reports/karate-summary.html
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | Karate | 2.1.4 | API testing framework |
-| Spring Boot | 4.1.0 | Application framework |
+| Spring Boot | 4.1.2 | Application framework |
 | Java | 21 | Programming language |
 | Gradle | 9.8.2+ | Build tool |
 | JUnit | 6 | Test framework |
 | Spotless | 8.10.4 | Code formatting |
-| PMD | 7.21.0 | Static code analysis |
+| PMD | 7.22.0 | Static code analysis |
 | SpotBugs | 4.9.8 | Security analysis |
-| OWASP Dependency-Check | 12.2.2 | CVE scanning |
+| OWASP Dependency-Check | 13.0.0 | CVE scanning |
 
 ## 🏗️ Project Structure
 
@@ -185,13 +185,22 @@ The report includes:
 
 ## 🔐 Security Features
 
+### Local Security (Pre-commit)
 - **Pre-commit hooks** - Automated quality and security checks
 - **SpotBugs** - Security vulnerability detection
 - **OWASP Dependency-Check** - CVE scanning
 - **Secret detection** - Prevent committing sensitive data
 - **PMD security rules** - Security best practices
 
-See [SECURITY.md](SECURITY.md) for details.
+### CI/CD Security (GitHub Actions)
+- **CodeQL Analysis** - Security vulnerability scanning (security-extended queries)
+- **Dependency Review** - Blocks HIGH severity CVEs on PRs
+- **Automated Builds** - Validates every PR and push to main
+- **Dependabot** - Weekly automated dependency updates
+
+**Security Status**: [![Security Scan](https://github.com/roldophe/karate-framework/actions/workflows/pr-security-scan.yml/badge.svg)](https://github.com/roldophe/karate-framework/actions/workflows/pr-security-scan.yml)
+
+See [SECURITY.md](SECURITY.md) for complete details.
 
 ## 🧑‍💻 IDE Setup
 

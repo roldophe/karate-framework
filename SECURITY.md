@@ -501,9 +501,53 @@ dependencyCheck {
 
 ## CI/CD Integration
 
-### GitHub Actions
+### GitHub Actions (Already Configured ✅)
 
-Create `.github/workflows/security.yml`:
+This repository includes **3 automated security workflows**:
+
+#### 1. `.github/workflows/pr-security-scan.yml` (Main Security Workflow)
+
+Runs on every **pull request** and **push to main**:
+
+| Job | Duration | Purpose |
+|-----|----------|---------|
+| **Build & Test** | ~30s | Gradle build + JUnit tests |
+| **CodeQL Scan** | ~2m | Security vulnerability analysis |
+| **Dependency CVE Check** | ~7s | Blocks HIGH severity CVEs |
+
+**Status**: [![PR Security Scan](https://github.com/roldophe/karate-framework/actions/workflows/pr-security-scan.yml/badge.svg)](https://github.com/roldophe/karate-framework/actions/workflows/pr-security-scan.yml)
+
+**Configuration**:
+```yaml
+# .github/workflows/pr-security-scan.yml
+- CodeQL: security-extended queries (most comprehensive)
+- Dependency Review: fails on HIGH severity
+- Concurrency: cancels old runs on new commits
+- Latest actions: v7, v6, v4
+```
+
+#### 2. `.github/workflows/dependency-submission.yml`
+
+Submits dependency graph on **push to main**:
+- Enables Dependabot to detect transitive dependencies
+- Critical for Spring Boot projects (many transitive deps)
+
+#### 3. `.github/dependabot.yml`
+
+Automated **weekly** dependency updates:
+- Gradle dependencies (Spring updates grouped)
+- GitHub Actions version updates
+
+**Dependabot will automatically**:
+- Scan for outdated dependencies
+- Create PRs for security updates
+- Group Spring Boot updates into 1 PR
+
+---
+
+### Custom GitHub Actions Workflow (Optional)
+
+If you want to add additional checks, create `.github/workflows/security.yml`:
 
 ```yaml
 name: Security Scan
