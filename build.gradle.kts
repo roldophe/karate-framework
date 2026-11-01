@@ -5,7 +5,7 @@ plugins {
     id("com.diffplug.spotless") version "8.10.4"
     id("pmd")
     id("com.github.spotbugs") version "6.5.13"
-    id("org.owasp.dependencycheck") version "12.2.2"
+    id("org.owasp.dependencycheck") version "13.0.0"
 }
 
 group = "com.example"
