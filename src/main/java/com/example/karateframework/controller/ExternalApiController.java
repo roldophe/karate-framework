@@ -27,10 +27,7 @@ public class ExternalApiController {
             return ResponseEntity.ok(response);
         } catch (ExternalApiException e) {
             if (log.isErrorEnabled()) {
-                log.error(
-                        "Failed to fetch external user {}: {}",
-                        sanitizeForLog(userId),
-                        e.getMessage());
+                log.error("Failed to fetch external user", e);
             }
             return ResponseEntity.internalServerError().build();
         }
