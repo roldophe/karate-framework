@@ -3,8 +3,13 @@ Feature: User CRUD Operations
 
   Background:
     * url baseUrl
+    * def uniqueSuffix = new Date().getTime()
     * def createUserRequest = read('classpath:karate/data/request/create-user.json')
+    * set createUserRequest.username = 'karate_test_' + uniqueSuffix
+    * set createUserRequest.email = 'karate_test_' + uniqueSuffix + '@example.com'
     * def updateUserRequest = read('classpath:karate/data/request/update-user.json')
+    * set updateUserRequest.username = 'karate_updated_' + uniqueSuffix
+    * set updateUserRequest.email = 'karate_updated_' + uniqueSuffix + '@example.com'
     * def expectedUserResponse = read('classpath:karate/data/response/user-response-schema.json')
 
   @smoke @regression
@@ -58,20 +63,23 @@ Feature: User CRUD Operations
 
   @regression
   Scenario: Get non-existent user returns 404
-    Given path '/api/users/non-existent-id-12345'
+    * def nonExistentId = '00000000-0000-0000-0000-000000000000'
+    Given path '/api/users', nonExistentId
     When method GET
     Then status 404
 
   @regression
   Scenario: Update non-existent user returns 404
-    Given path '/api/users/non-existent-id-12345'
+    * def nonExistentId = '00000000-0000-0000-0000-000000000000'
+    Given path '/api/users', nonExistentId
     And request updateUserRequest
     When method PUT
     Then status 404
 
   @regression
   Scenario: Delete non-existent user returns 404
-    Given path '/api/users/non-existent-id-12345'
+    * def nonExistentId = '00000000-0000-0000-0000-000000000000'
+    Given path '/api/users', nonExistentId
     When method DELETE
     Then status 404
 
@@ -79,22 +87,26 @@ Feature: User CRUD Operations
   Scenario Outline: Create users with different data
     * def userData = read('classpath:karate/data/csv/users.csv')
     * def userRow = userData[<rowIndex>]
+    * def timestamp = new Date().getTime()
+    * def uniqueUsername = userRow.username + '_' + timestamp + '_' + <rowIndex>
+    * def uniqueEmail = userRow.username + '_' + timestamp + '_' + <rowIndex> + '@example.com'
 
     Given path '/api/users'
     And request
       """
       {
-        "username": "#(userRow.username)",
-        "email": "#(userRow.email)",
+        "username": "#(uniqueUsername)",
+        "email": "#(uniqueEmail)",
         "firstName": "#(userRow.firstName)",
-        "lastName": "#(userRow.lastName)"
+        "lastName": "#(userRow.lastName)",
+        "active": true
       }
       """
     When method POST
     Then status 201
     And match response.id == '#uuid'
-    And match response.username == userRow.username
-    And match response.email == userRow.email
+    And match response.username == uniqueUsername
+    And match response.email == uniqueEmail
 
     Examples:
       | rowIndex |

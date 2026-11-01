@@ -40,7 +40,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "Jane",
-        "lastName": "Smith"
+        "lastName": "Smith",
+        "active": true
       }
       """
     When method POST
@@ -65,7 +66,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "Bob",
-        "lastName": "Johnson"
+        "lastName": "Johnson",
+        "active": true
       }
       """
     When method POST
@@ -94,7 +96,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "Original",
-        "lastName": "Name"
+        "lastName": "Name",
+        "active": true
       }
       """
     When method POST
@@ -131,7 +134,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "Delete",
-        "lastName": "Me"
+        "lastName": "Me",
+        "active": true
       }
       """
     When method POST
@@ -158,7 +162,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "Active",
-        "lastName": "User"
+        "lastName": "User",
+        "active": true
       }
       """
     When method POST
@@ -188,7 +193,8 @@ Feature: User CRUD Operations with Database
         "username": "#(user1Username)",
         "email": "#(user1Email)",
         "firstName": "Search",
-        "lastName": "Test1"
+        "lastName": "Test1",
+        "active": true
       }
       """
     When method POST
@@ -211,7 +217,8 @@ Feature: User CRUD Operations with Database
         "username": "ab",
         "email": "#(uniqueEmail)",
         "firstName": "Test",
-        "lastName": "User"
+        "lastName": "User",
+        "active": true
       }
       """
     When method POST
@@ -226,7 +233,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "invalid-email",
         "firstName": "Test",
-        "lastName": "User"
+        "lastName": "User",
+        "active": true
       }
       """
     When method POST
@@ -242,7 +250,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(uniqueEmail)",
         "firstName": "First",
-        "lastName": "User"
+        "lastName": "User",
+        "active": true
       }
       """
     When method POST
@@ -257,7 +266,8 @@ Feature: User CRUD Operations with Database
         "username": "#(uniqueUsername)",
         "email": "#(anotherEmail)",
         "firstName": "Second",
-        "lastName": "User"
+        "lastName": "User",
+        "active": true
       }
       """
     When method POST
