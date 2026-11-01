@@ -15,16 +15,24 @@ function fn() {
         // Local development - Spring Boot running on random port
         var port = karate.properties['local.server.port'] || '8080';
         config.baseUrl = 'http://localhost:' + port;
+        config.externalApiUrl = 'http://localhost:1080';
+        config.dbUrl = 'jdbc:postgresql://localhost:5432/karatedb';
         karate.log('Local mode: baseUrl =', config.baseUrl);
     } else if (env === 'dev') {
         // Development environment
         config.baseUrl = 'https://api-dev.example.com';
+        config.externalApiUrl = 'https://external-api-dev.example.com';
+        config.dbUrl = 'jdbc:postgresql://dev-db:5432/karatedb';
     } else if (env === 'uat') {
         // UAT/Staging environment
         config.baseUrl = 'https://api-uat.example.com';
+        config.externalApiUrl = 'https://external-api-uat.example.com';
+        config.dbUrl = 'jdbc:postgresql://uat-db:5432/karatedb';
     } else if (env === 'prod') {
         // Production environment
         config.baseUrl = 'https://api.example.com';
+        config.externalApiUrl = 'https://external-api.example.com';
+        config.dbUrl = 'jdbc:postgresql://prod-db:5432/karatedb';
     }
 
     // Common headers

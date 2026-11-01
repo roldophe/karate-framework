@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(git push)",
+      "Bash(git add src/main/java/com/example/karateframework/exception/ExternalApiException.java)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: Add @Serial annotation to ExternalApiException\n\nAdded @Serial annotation to serialVersionUID field to improve serialization\nsafety and resolve Qodana code quality warning.\n\nThe @Serial annotation (introduced in Java 14) provides compile-time validation\nthat the annotated field is part of the serialization mechanism, helping prevent\nserialization-related bugs.\n\nChanges:\n- Added java.io.Serial import\n- Annotated serialVersionUID with @Serial\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

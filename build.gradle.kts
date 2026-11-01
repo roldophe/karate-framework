@@ -25,10 +25,35 @@ dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Database
+    implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+
+    // RestClient (available in Spring Boot 4.x)
+    implementation("org.springframework.boot:spring-boot-starter-webflux") // For WebClient as fallback
+
+    // Lombok - Reduce boilerplate code
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    testCompileOnly("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
+
+    // MapStruct - Object mapping
+    implementation("org.mapstruct:mapstruct:${property("MAPSTRUCT_VERSION")}")
+    annotationProcessor("org.mapstruct:mapstruct-processor:${property("MAPSTRUCT_VERSION")}")
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:${property("MAPSTRUCT_VERSION")}")
+
+    // Lombok + MapStruct integration
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:${property("LOMBOK_MAPSTRUCT_BINDING_VERSION")}")
 
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.karatelabs:karate-junit6:${property("KARATE_JUNIT6_VERSION")}")
+    testImplementation("com.h2database:h2") // For in-memory testing
 
     // Security: Override vulnerable transitive dependencies
     // OGNL vulnerability fix (CVE via Karate → Thymeleaf → OGNL)
@@ -245,11 +270,10 @@ dependencyCheck {
         delay = 2000 // milliseconds between requests
     }
 
-    // Analyzers configuration
+    // Analyzers configuration (disable non-Java analyzers)
     analyzers {
         assemblyEnabled = false
         nuspecEnabled = false
-        nodeEnabled = false
     }
 }
 

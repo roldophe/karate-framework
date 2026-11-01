@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: karate-postgres
+    environment:
+      POSTGRES_DB: karatedb
+      POSTGRES_USER: karate_user
+      POSTGRES_PASSWORD: karate_pass
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U karate_user -d karatedb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - karate-network
+
+  # Mock external API for testing
+  mockapi:
+    image: mockserver/mockserver:latest
+    container_name: karate-mockapi
+    environment:
+      MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/initializerJson.json
+    ports:
+      - "1080:1080"
+    volumes:
+      - ./docker/mockserver:/config
+    networks:
+      - karate-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  karate-network:
+    driver: bridge
