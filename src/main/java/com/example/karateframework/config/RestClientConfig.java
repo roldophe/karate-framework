@@ -11,9 +11,6 @@ public class RestClientConfig {
     @Value("${external.api.base-url}")
     private String baseUrl;
 
-    @Value("${external.api.timeout:5000}")
-    private int timeout;
-
     @Bean
     public RestClient restClient(RestClient.Builder builder) {
         return builder.baseUrl(baseUrl)
