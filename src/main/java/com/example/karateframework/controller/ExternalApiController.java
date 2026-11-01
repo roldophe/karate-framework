@@ -27,7 +27,10 @@ public class ExternalApiController {
             return ResponseEntity.ok(response);
         } catch (ExternalApiException e) {
             if (log.isErrorEnabled()) {
-                log.error("Failed to fetch external user", e);
+                log.error(
+                        "Failed to fetch external user {}: {}",
+                        sanitizeForLog(userId),
+                        e.getMessage());
             }
             return ResponseEntity.internalServerError().build();
         }
@@ -50,6 +53,8 @@ public class ExternalApiController {
         if (input == null) {
             return null;
         }
-        return input.replaceAll("[\\r\\n\\t\\f\\u0000-\\u001F\\u007F]", "_");
+        String normalized = input.replace("\r\n", "\n").replace('\r', '\n');
+        normalized = normalized.replace('\n', '_');
+        return normalized.replaceAll("[\\u0000-\\u001F\\u007F]", "_");
     }
 }

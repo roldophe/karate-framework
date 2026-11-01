@@ -123,6 +123,8 @@ public class UserService {
         if (input == null) {
             return null;
         }
-        return input.replace('\r', '_').replace('\n', '_');
+        String normalized = input.replace("\r\n", "\n").replace('\r', '\n');
+        normalized = normalized.replace('\n', '_');
+        return normalized.replaceAll("[\\u0000-\\u001F\\u007F]", "_");
     }
 }
