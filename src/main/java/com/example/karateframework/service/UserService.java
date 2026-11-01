@@ -21,7 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User createUser(User user) {
-        log.debug("Creating user with username: {}", user.getUsername());
+        log.debug("Creating user with username: {}", sanitizeForLog(user.getUsername()));
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
@@ -116,5 +116,12 @@ public class UserService {
                                                 "User not found with id: " + id));
         user.setActive(false);
         userRepository.save(user);
+    }
+
+    private String sanitizeForLog(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replace('\r', '_').replace('\n', '_');
     }
 }
