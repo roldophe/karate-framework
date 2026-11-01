@@ -28,11 +28,7 @@ dependencies {
 
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    // Karate Testing Framework v2.x (uses JUnit 6 - aligns with Spring Boot 4.x)
-    // Version: 2.1.4 (Oct 2026) - Latest stable, requires Java 21+
-    // Note: Karate 2.x uses @Karate annotation with JUnit 6 @TestFactory for dynamic tests
-    testImplementation("io.karatelabs:karate-junit6:2.1.4")
+    testImplementation("io.karatelabs:karate-junit6:${property("KARATE_JUNIT6_VERSION")}")
 }
 
 tasks.withType<Test> {
