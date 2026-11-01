@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.karateframework.dto.ExternalUserResponse;
 import com.example.karateframework.dto.ValidationRequest;
 import com.example.karateframework.dto.ValidationResponse;
+import com.example.karateframework.exception.ExternalApiException;
 import com.example.karateframework.service.ExternalApiService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,10 @@ public class ExternalApiController {
         try {
             ExternalUserResponse response = externalApiService.getExternalUser(userId);
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (ExternalApiException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to fetch external user {}: {}", userId, e.getMessage());
+            }
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -34,7 +38,10 @@ public class ExternalApiController {
         try {
             ValidationResponse response = externalApiService.validateData(request.getData());
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (ExternalApiException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to validate data: {}", e.getMessage());
+            }
             return ResponseEntity.internalServerError().build();
         }
     }

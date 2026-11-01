@@ -7,6 +7,7 @@ import org.springframework.web.client.RestClient;
 import com.example.karateframework.dto.ExternalUserResponse;
 import com.example.karateframework.dto.ValidationRequest;
 import com.example.karateframework.dto.ValidationResponse;
+import com.example.karateframework.exception.ExternalApiException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,9 @@ public class ExternalApiService {
 
     public ExternalUserResponse getExternalUser(String userId) {
         String safeUserId = sanitizeForLog(userId);
-        log.debug("Fetching external user with ID: {}", safeUserId);
+        if (log.isDebugEnabled()) {
+            log.debug("Fetching external user with ID: {}", safeUserId);
+        }
 
         return restClient
                 .get()
@@ -29,22 +32,26 @@ public class ExternalApiService {
                 .onStatus(
                         HttpStatusCode::is4xxClientError,
                         (request, response) -> {
-                            log.error(
-                                    "Client error while fetching user {}: {}",
-                                    safeUserId,
-                                    response.getStatusCode());
-                            throw new RuntimeException(
+                            if (log.isErrorEnabled()) {
+                                log.error(
+                                        "Client error while fetching user {}: {}",
+                                        safeUserId,
+                                        response.getStatusCode());
+                            }
+                            throw new ExternalApiException(
                                     "External API returned client error: "
                                             + response.getStatusCode());
                         })
                 .onStatus(
                         HttpStatusCode::is5xxServerError,
                         (request, response) -> {
-                            log.error(
-                                    "Server error while fetching user {}: {}",
-                                    safeUserId,
-                                    response.getStatusCode());
-                            throw new RuntimeException(
+                            if (log.isErrorEnabled()) {
+                                log.error(
+                                        "Server error while fetching user {}: {}",
+                                        safeUserId,
+                                        response.getStatusCode());
+                            }
+                            throw new ExternalApiException(
                                     "External API returned server error: "
                                             + response.getStatusCode());
                         })
@@ -53,7 +60,9 @@ public class ExternalApiService {
 
     public ValidationResponse validateData(String data) {
         String safeData = sanitizeForLog(data);
-        log.debug("Validating data: {}", safeData);
+        if (log.isDebugEnabled()) {
+            log.debug("Validating data: {}", safeData);
+        }
 
         ValidationRequest request = new ValidationRequest(data);
 
@@ -65,8 +74,12 @@ public class ExternalApiService {
                 .onStatus(
                         HttpStatusCode::isError,
                         (req, response) -> {
-                            log.error("Error while validating data: {}", response.getStatusCode());
-                            throw new RuntimeException(
+                            if (log.isErrorEnabled()) {
+                                log.error(
+                                        "Error while validating data: {}",
+                                        response.getStatusCode());
+                            }
+                            throw new ExternalApiException(
                                     "External API validation error: " + response.getStatusCode());
                         })
                 .body(ValidationResponse.class);

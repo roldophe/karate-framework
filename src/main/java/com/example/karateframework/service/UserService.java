@@ -21,7 +21,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User createUser(User user) {
-        log.debug("Creating user with username: {}", sanitizeForLog(user.getUsername()));
+        if (log.isDebugEnabled()) {
+            log.debug("Creating user with username: {}", sanitizeForLog(user.getUsername()));
+        }
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
@@ -29,7 +31,9 @@ public class UserService {
             throw new IllegalArgumentException("Email already exists: " + user.getEmail());
         }
         User savedUser = userRepository.save(user);
-        log.info("User created with id: {}", savedUser.getId());
+        if (log.isInfoEnabled()) {
+            log.info("User created with id: {}", savedUser.getId());
+        }
         return savedUser;
     }
 
@@ -75,19 +79,16 @@ public class UserService {
                                                 "User not found with id: " + id));
 
         // Check username uniqueness if changed
-        if (!user.getUsername().equals(userDetails.getUsername())) {
-            if (userRepository.existsByUsername(userDetails.getUsername())) {
-                throw new IllegalArgumentException(
-                        "Username already exists: " + userDetails.getUsername());
-            }
+        if (!user.getUsername().equals(userDetails.getUsername())
+                && userRepository.existsByUsername(userDetails.getUsername())) {
+            throw new IllegalArgumentException(
+                    "Username already exists: " + userDetails.getUsername());
         }
 
         // Check email uniqueness if changed
-        if (!user.getEmail().equals(userDetails.getEmail())) {
-            if (userRepository.existsByEmail(userDetails.getEmail())) {
-                throw new IllegalArgumentException(
-                        "Email already exists: " + userDetails.getEmail());
-            }
+        if (!user.getEmail().equals(userDetails.getEmail())
+                && userRepository.existsByEmail(userDetails.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + userDetails.getEmail());
         }
 
         user.setUsername(userDetails.getUsername());
